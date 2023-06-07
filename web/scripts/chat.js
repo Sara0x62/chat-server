@@ -3,7 +3,7 @@ Request structure
 
 {
     msg_type: string
-    senders: string,
+    sender: string,
     content: string
 }
 */
@@ -24,9 +24,9 @@ const userlist = document.querySelector('#userlist-container');
 
 // Websocket urls
 const host = window.location.hostname;
-const ws_url = "ws://" + host + ":8080/websocket";
+const ws_url = "ws://" + host + "/websocket";
 const wss_url = "wss://" + host + "/websocket";
-const localhost = "localhost:8080";
+const localhost = "ws://localhost:8080/websocket";
 
 // Anti-timeout - Heartbeat - time in ms
 const heartbeat_timeout = 10000;
@@ -41,7 +41,7 @@ join_btn.addEventListener('click', function(e) {
 
     chat_container.attributes.removeNamedItem("hidden");
 
-    const websock = new WebSocket(wss_url);
+    const websock = new WebSocket(localhost);
 
     websock.onopen = function (e) {
         console.log("Websocket connection established");

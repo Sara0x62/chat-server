@@ -28,20 +28,7 @@ impl SocketMessage {
             .replace("\"", "&quot;")
             .replace("'", "&#039;");
     }
-    pub fn clean_sender(&mut self) {
-        self.sender = self.sender.
-                replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#039;");
-    }
 }
-
-pub struct NewMessage {
-    pub sender: String,
-    pub content: String,
-}
-
 
 pub struct AppState {
     pub user_set: Mutex<HashSet<String>>,

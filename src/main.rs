@@ -3,30 +3,14 @@ use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
-use axum::body::{self, Full};
-use axum::http::{Response, HeaderValue};
-// Axum imports
-use axum::{
-    extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade},
-        State,
-    },
-    response::{Html, IntoResponse},
-    routing::get,
-    Router,
-    Json,
-};
-
-use tower::ServiceExt;
-use tower_http::{
-    services::{ServeDir, ServeFile},
-    trace::TraceLayer,
-};
+use axum::Router;
+use axum::routing::get;
 
 // Tokio imports
 use tokio::{
     sync::broadcast,
 };
+use tower_http::services::ServeDir;
 use tracing::info;
 
 // Local imports
@@ -53,7 +37,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(routes::index))
         .route("/websocket", get(routes::socket_handler))
-        .nest_service("/assets", ServeDir::new("assets"))
+        .nest_service("/styles", ServeDir::new("web/styles"))
+        .nest_service("/scripts", ServeDir::new("web/scripts"))
         .with_state(app_state);
 
     info!("Listening on {}", addr);
