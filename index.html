@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="assets/style.css">
+        <script defer type="text/javascript" src="assets/chat.js"></script>
+    </head>
+
+    <body>
+        <div class="title-bar">
+            <div class="title">Hello World</div>
+        </div>
+
+        <div class="content">
+            <div id="notifs" class="notification-container" >
+                <!-- <div class="flex-column alert">Alert!</div> -->
+            </div>
+
+            <div class="flex-container join-container">
+                <input type="text" id="username" class="message" placeholder="Username">
+                <input type="button" id="join_btn" class="btn" value="Join">
+            </div>
+
+            <div hidden id="chat-container" class="flex-container">
+
+                    <div class="chat-section">
+                        <div class="chat-container scrollbar" id="chat-window">
+                            <div class="chat-item">Not connected</div>
+                        </div>
+
+                        <div class="flex-row">
+                            <input type="text" id="message_field" class="message" placeholder="Message"/>
+                            <input type="button" id="message_btn" class="btn" value="Send"/>
+                        </div>
+                    </div>
+
+                    <div class="users flex-column">
+                        <div class="users-title">Users:</div>
+                        <div id="userlist-container">
+                        </div>
+                    </div>
+        </div>
+        </div>
+
+        <footer>a little chat app by - <a href="https://github.com/Sara0x62" target="_blank"> Me :3</a></footer>
+    </body>
+</html>
