@@ -31,6 +31,7 @@ const color_selector = document.querySelector("#user_color");
 
 // Websocket URL
 const host = window.location.hostname;
+const wss_url = "wss://" + host + "/websocket";
 const websocket_url = "ws://" + host + "/websocket";
 const local = "ws://0.0.0.0:8080/websocket";
 
@@ -50,12 +51,12 @@ join_btn.addEventListener("click", function(e) {
     SetVisible("#chat_app");
     SetHidden("#chat_join");
 
-    const websocket = new WebSocket(local);
+    const websocket = new WebSocket(wss_url);
 
     websocket.onopen = function (e) {
         console.log("Socket connection opened");
 
-        let reply = SocketMessage("join", username, usercolor, "joined");
+        let reply = SocketMessage("join", username, usercolor, username);
         websocket.send(reply);
     }
 
@@ -94,6 +95,8 @@ join_btn.addEventListener("click", function(e) {
         else {
             console.log("Unknown message type? = " + msg.msg_type);
         }
+
+        chat_container.scrollTop = chat_container.scrollHeight;
     }
 
     function SendMessage() {
@@ -104,7 +107,7 @@ join_btn.addEventListener("click", function(e) {
     }
 
     message_field.onkeydown = function(e) {
-        if (e.key == 'Enter') {
+        if (e.key == 'Enter' && message_field.value.length > 0) {
             SendMessage();
         }
     }
@@ -133,29 +136,67 @@ function SocketMessage(msg_type, sender, color, message) {
 }
 
 function ChatNotification(msg) {
+    let notif = "";
+
+    if (msg.msg_type == "join") {
+        notif = "Welcome to the chat " + msg.content;
+    }
+    else if (msg.msg_type == "leave") {
+        notif = msg.content;
+    }
+    else if (msg.msg_type == "update") {
+        notif = msg.content + " is now known as " + msg.sender;
+    }
+
     let template = 
     `
     <div class="flex flex-row justify-between content-center items-center bg-sky-950 hover:bg-sky-900 pl-5 pt-4 pb-4">
         <p class="font-extrabold text-[#ffffff]">Server : </p>
-        <p class="break-words">` + msg.sender + ` ` + msg.content + `</p>
+        <p class="break-words">` + notif + `</p>
         <p class="text-right pr-2 text-xs text-gray-400">`+ GetTimestamp() + `</p>
     </div>
     `;
 
+    last_user = "";
+
     chat_container.innerHTML += template;
 }
 
+let last_user = "";
+let current_msg_id = 0;
+let last_timestamp_id = 0;
 function ChatMessage(msg) {
-    let template =
-    `
-    <div class="flex flex-col bg-gray-800 hover:bg-gray-700 pl-5 pb-2">
-        <h2 class="font-bold text-[` + msg.color + `]">` + msg.sender + ` </h2>
-        <p class="pl-5 break-words pr-3">` + msg.content + ` </p>
-        <p class="text-right pr-2 text-xs text-gray-400">` + GetTimestamp() + `</p>
-    </div>
-    `;
 
-    chat_container.innerHTML += template;
+    if (msg.sender !== last_user) {
+        let template =
+        `
+        <div id=` + "msgID-" + current_msg_id + ` class="flex flex-col bg-gray-800 hover:bg-gray-700 pl-5 pb-2">
+            <h2 class="font-bold text-[` + msg.color + `]">` + msg.sender + ` </h2>
+            <p class="pl-5 break-words pr-3">` + msg.content + ` </p>
+            <p id="timeID-` + last_timestamp_id + `" class="text-right pr-2 text-xs text-gray-400">` + GetTimestamp() + `</p>
+        </div>
+        `;
+        
+        current_msg_id += 1;
+        last_timestamp_id += 1;
+
+        last_user = msg.sender;
+
+        chat_container.innerHTML += template;
+    } else {
+        let append_template =
+        `
+        <p class="pl-5 break-words pr-3">` + msg.content + ` </p>
+        <p id="timeID-` + last_timestamp_id + `" class="text-right pr-2 text-xs text-gray-400">` + GetTimestamp() + `</p>
+        `
+        let prev_msg = document.querySelector("#msgID-" + (current_msg_id - 1));
+        
+        document.getElementById("timeID-" + (last_timestamp_id - 1)).remove();
+
+        last_timestamp_id += 1;
+
+        prev_msg.innerHTML += append_template;
+    }
 }
 
 function UpdateUsers(msg) {

@@ -146,6 +146,9 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
                 if tmp.sender != *clientname {
                     let new_reply = generate_reply("error", "Username credentials dont match!");
                     let _ = recv_sender.send(serde_json::to_string(&new_reply).unwrap()).await;
+                } else if tmp.content.len() == 0 {
+                    let new_reply = generate_reply("error", "No message provided!");
+                    let _ = recv_sender.send(serde_json::to_string(&new_reply).unwrap()).await;
                 } else {
                     let _ = tx.send(format!("{}", &reply));
                 }
