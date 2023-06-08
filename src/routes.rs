@@ -65,6 +65,7 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
                 let userlist = serde_json::to_string(&SocketMessage {
                     msg_type: "userlist".to_string(),
                     sender: "[Host]".to_string(),
+                    color: "#FFFFFF".to_string(),
                     content: user_list,
                 })
                 .unwrap();
@@ -122,6 +123,7 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
                     let userlist = serde_json::to_string(&SocketMessage {
                         msg_type: "userlist".to_string(),
                         sender: "[Host]".to_string(),
+                        color: "#FFFFFF".to_string(),
                         content: user_list,
                     }).unwrap();
 
@@ -132,7 +134,7 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
                         "Failed to insert new user! - already exists => '{}'",
                         &tmp.content
                     );
-                    let new_reply = generate_reply("invalid_username", "username already in use");
+                    let new_reply = generate_reply("error", "username already in use");
                     let _ = recv_sender.send(serde_json::to_string(&new_reply).unwrap()).await;
                     return;
                 }
@@ -142,7 +144,7 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
 
                 // Check if the JSON sender is correct
                 if tmp.sender != *clientname {
-                    let new_reply = generate_reply("bad_request", "Username credentials dont match");
+                    let new_reply = generate_reply("error", "Username credentials dont match!");
                     let _ = recv_sender.send(serde_json::to_string(&new_reply).unwrap()).await;
                 } else {
                     let _ = tx.send(format!("{}", &reply));
@@ -175,7 +177,8 @@ async fn websocket(stream: WebSocket, state: Arc<AppState>) {
         let msg = serde_json::to_string(&SocketMessage {
             msg_type: "leave".to_string(),
             sender: lock.to_string(),
-            content: "User left".to_string(),
+            color: "".to_string(),
+            content: format!("User '{}' left", lock).to_string(),
         })
         .unwrap();
         let _ = state.tx.send(msg);

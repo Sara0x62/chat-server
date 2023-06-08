@@ -14,6 +14,7 @@ pub fn generate_reply(msg_type: &str, msg: &str) -> SocketMessage {
     SocketMessage {
         msg_type: msg_type.to_string(),
         sender: "SERVER".to_string(),
+        color: "#ffffff".to_string(),
         content: msg.to_string()
     }
 }

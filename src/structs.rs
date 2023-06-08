@@ -12,6 +12,7 @@ pub struct User {
 pub struct SocketMessage {
     pub msg_type: String,
     pub sender: String,
+    pub color: String,
     pub content: String,
 }
 

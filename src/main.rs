@@ -37,7 +37,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(routes::index))
         .route("/websocket", get(routes::socket_handler))
-        .nest_service("/styles", ServeDir::new("web/styles"))
+        .nest_service("/fonts", ServeDir::new("web/fonts"))
+        .nest_service("/imgs", ServeDir::new("web/imgs"))
         .nest_service("/scripts", ServeDir::new("web/scripts"))
         .with_state(app_state);
 
