@@ -1,6 +1,6 @@
 # chat-server
 A simple chat app
-- Backend in Rust,
+- Backend in Rust (Axum and Tokio),
 - frontend in HTML, and JS with websockets - CSS is tailwind
 
 It does not store any of the chats, only the people actively in the chat room can see the chat messages, 
